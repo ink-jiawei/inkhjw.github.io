@@ -105,14 +105,14 @@
 <meta name="description" content="一、概述
 每一个 app 的运营都需要经过不断的迭代与更新!在产品不断的升级过程中，项目的代码量会变得越来越大。当采用 Android 原生的架构（ Android 项目的架构：当建立起一个新项目时，默认的就像是个 MVC 的架构）去不断完善、升级项目时。到最后项目就变得越来越臃肿，这时，随着项目的越来越大，也许不得已需要进行项目的重构，然而这是个工作量很大的任务。所以，做好项目的架构，写好模型往">
 <meta property="og:type" content="article">
-<meta property="og:title" content="my first blog">
+<meta property="og:title" content="软件设计模式：基于MVP的Android项目架构">
 <meta property="og:url" content="https://inkhjw.github.io/2016/12/02/my-first-blog/index.html">
 <meta property="og:site_name" content="inkhjw's blog">
 <meta property="og:description" content="一、概述
 每一个 app 的运营都需要经过不断的迭代与更新!在产品不断的升级过程中，项目的代码量会变得越来越大。当采用 Android 原生的架构（ Android 项目的架构：当建立起一个新项目时，默认的就像是个 MVC 的架构）去不断完善、升级项目时。到最后项目就变得越来越臃肿，这时，随着项目的越来越大，也许不得已需要进行项目的重构，然而这是个工作量很大的任务。所以，做好项目的架构，写好模型往">
-<meta property="og:updated_time" content="2016-12-02T07:23:44.757Z">
+<meta property="og:updated_time" content="2016-12-05T12:38:50.977Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="my first blog">
+<meta name="twitter:title" content="软件设计模式：基于MVP的Android项目架构">
 <meta name="twitter:description" content="一、概述
 每一个 app 的运营都需要经过不断的迭代与更新!在产品不断的升级过程中，项目的代码量会变得越来越大。当采用 Android 原生的架构（ Android 项目的架构：当建立起一个新项目时，默认的就像是个 MVC 的架构）去不断完善、升级项目时。到最后项目就变得越来越臃肿，这时，随着项目的越来越大，也许不得已需要进行项目的重构，然而这是个工作量很大的任务。所以，做好项目的架构，写好模型往">
 
@@ -148,7 +148,7 @@
 
 
 
-  <title> my first blog | inkhjw's blog </title>
+  <title> 软件设计模式：基于MVP的Android项目架构 | inkhjw's blog </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -339,7 +339,7 @@
             
             
               
-                my first blog
+                软件设计模式：基于MVP的Android项目架构
               
             
           </h1>
@@ -407,8 +407,10 @@
 <p>在 tasks 包中：</p>
 <p>TasksContract（定义 Presenter、View 的接口）<br>TasksFragment（实现了 TasksContract.View 接口定义的功能）<br>TasksPresenter（实现了 TasksContract.Presenter 接口定义的功能）<br>TasksActivity（TasksFragment 的载体）<br>在 data 包中，则是定义了对应的功能需要的数据实体、model 接口：</p>
 <p>任务实体 Task<br>model 接口 TasksDataSource<br>对应功能的 TasksDataSource实现类<br>（2）源码分析</p>
-<p>首先，我们先看一下Presenter、View的两个基类<br>public interface BasePresenter {<br>    void start();<br>}<br>1<br>2<br>3<br>1<br>2<br>3<br>start()方法在View界面开始显示的时候调用，一般是在Activity、Fragment的onStart()方法中</p>
-<p>public interface BaseView<t> {<br>    void setPresenter(T presenter);<br>}<br>1<br>2<br>3<br>1<br>2<br>3<br>setPresenter(T presenter)方法在Presenter实例化之后调用，一般是在Presenter构造方法最后调用，传入自己。 </t></p>
+<p>首先，我们先看一下Presenter、View的两个基类<br>public interface BasePresenter {<br>    void start();<br>}</p>
+<p>start()方法在View界面开始显示的时候调用，一般是在Activity、Fragment的onStart()方法中</p>
+<p>public interface BaseView<t> {<br>    void setPresenter(T presenter);<br>}</t></p>
+<p>setPresenter(T presenter)方法在Presenter实例化之后调用，一般是在Presenter构造方法最后调用，传入自己。 </p>
 <ol>
 <li>我们从 TasksActivity 入手，在 onCreate() 方法中，可以看到下面一段代码</li>
 </ol>
@@ -423,12 +425,15 @@ if (tasksFragment == null) {
 }
 //新建TasksPresenter实例
 mTasksPresenter = new TasksPresenter(
-</code></pre><p>Injection.provideTasksRepository(getApplicationContext()), tasksFragment);<br>    }<br>1<br>2<br>3<br>4<br>5<br>6<br>7<br>8<br>9<br>10<br>11<br>12<br>13<br>14<br>15<br>16<br>17<br>1<br>2<br>3<br>4<br>5<br>6<br>7<br>8<br>9<br>10<br>11<br>12<br>13<br>14<br>15<br>16<br>17<br>TasksActivity 中，在添加 TasksFragment 后 new 了一个 TasksPresenter，接下来看TasksPresenter的构造方法。</p>
-<p>public TasksPresenter(@NonNull TasksRepository tasksRepository, @NonNull TasksContract.View tasksView) {<br>        mTasksRepository = checkNotNull(tasksRepository, “tasksRepository cannot be null”);<br>        mTasksView = checkNotNull(tasksView, “tasksView cannot be null!”);<br>        mTasksView.setPresenter(this);<br>    }<br>1<br>2<br>3<br>4<br>5<br>1<br>2<br>3<br>4<br>5<br>TasksPresenter的构造方法中，TasksPresenter获得了对mTasksView引用，并且还调用了mTasksView的setPresenter()方法。此时，TasksPresenter就传递到了TasksFragment 中，只要在TasksFragment 中对mPresenter 进行赋值，就完成了TasksFragment 与TasksPresenter实例引用的相互持有。</p>
+</code></pre><p>Injection.provideTasksRepository(getApplicationContext()), tasksFragment);<br>    }</p>
+<p>TasksActivity 中，在添加 TasksFragment 后 new 了一个 TasksPresenter，接下来看TasksPresenter的构造方法。</p>
+<p>public TasksPresenter(@NonNull TasksRepository tasksRepository, @NonNull TasksContract.View tasksView) {<br>        mTasksRepository = checkNotNull(tasksRepository, “tasksRepository cannot be null”);<br>        mTasksView = checkNotNull(tasksView, “tasksView cannot be null!”);<br>        mTasksView.setPresenter(this);<br>    }</p>
+<p>TasksPresenter的构造方法中，TasksPresenter获得了对mTasksView引用，并且还调用了mTasksView的setPresenter()方法。此时，TasksPresenter就传递到了TasksFragment 中，只要在TasksFragment 中对mPresenter 进行赋值，就完成了TasksFragment 与TasksPresenter实例引用的相互持有。</p>
 <p>@Override<br>    public void setPresenter(@NonNull TasksContract.Presenter presenter) {<br>        mPresenter = presenter;<br>    }</p>
 <p>到这里你也许会问，你只说了 V 与 P 的联系，那 M 去哪里了呢？</p>
 <p>嘿嘿，你在返回去看TasksPresenter的构造方法，这时你是否会发现这一句代码。</p>
-<p> mTasksRepository = checkNotNull(tasksRepository, “tasksRepository cannot be null”);<br>1<br>1<br>没错，就是在实例化TasksPresenter的同时，将数据处理model TasksRepository 赋予了TasksPresenter。至此，既然知道了各自的引用关系，那View、Presenter、Model的关系也就清楚了。</p>
+<p> mTasksRepository = checkNotNull(tasksRepository, “tasksRepository cannot be null”);</p>
+<p>没错，就是在实例化TasksPresenter的同时，将数据处理model TasksRepository 赋予了TasksPresenter。至此，既然知道了各自的引用关系，那View、Presenter、Model的关系也就清楚了。</p>
 <p>注意：Presenter的实例化在Activity中，但View对Presenter的引用却不一定在Activity中。因为View的实现类不一定是Activity，也可能是Fragment。至此，我们可以得出一个结论：Presenter的实例化在Activity中，View对Presenter的引用在View的实现类中。<br>3.既然清楚了View、Presenter、Model之间的关系，那么我们来看看它们之间到底是怎样协作的。由于代码比较多，我们就选择刷新数据功能来讲。</p>
 <p>View</p>
 <p> @Nullable<br>    @Override<br>    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {<br>        …略</p>
@@ -588,7 +593,7 @@ private void loadTasks(boolean forceUpdate, final boolean showLoadingUI) {
   <div class="comments" id="comments">
     
       <div class="ds-thread" data-thread-key="2016/12/02/my-first-blog/"
-           data-title="my first blog" data-url="https://inkhjw.github.io/2016/12/02/my-first-blog/">
+           data-title="软件设计模式：基于MVP的Android项目架构" data-url="https://inkhjw.github.io/2016/12/02/my-first-blog/">
       </div>
     
   </div>
